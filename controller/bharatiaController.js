@@ -1,19 +1,37 @@
 const Bharatia = require("../Model/bharatia");
 const Holding = require("../Model//holding");
 const error = require("./errors");
+
+exports.index = (req, res, next) => {
+  Bharatia.find()
+    .select({ holding: 1, _id: 0 })
+    .populate({
+      path: "holding",
+      options: { sort: 'base_fair', select: 'serial base_fair' },
+    })
+    // .populate("holding")
+    .exec((err, bharatias) => {
+      if (err) {
+        error.errorHandle(err, next);
+      }
+      return res.status(200).json(bharatias);
+    });
+};
+
 exports.create = (req, res, next) => {
   Holding.find({ serial: req.serial, type: req.type })
     .then(holding => {
+      const data = req.body;
       const bharatia = new Bharatia({
-        name: req.name,
-        address: req.address,
-        contact: req.contact,
+        name: data.name,
+        address: data.address,
+        contact: data.contact,
         holding: holding._id,
         Invoices: [],
         payments: [],
-        active_from: req.active || null,
-        checked_out: req.checked_out || null,
-        active: req.active,
+        active_from: data.active || null,
+        checked_out: data.checked_out || null,
+        active: data.active,
       });
       return bharatia.save();
     })

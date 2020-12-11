@@ -1,4 +1,5 @@
 const chalk = require("chalk");
+//Error to pass in Catchblock
 exports.throw500c = (err, next) => {
   if (!err.statusCode) {
     err.statusCode = 500;
@@ -31,7 +32,8 @@ exports.throwError = (err, status, errorData) => {
   throw error;
 };
 
-exports.throwErrorc = (err, status, errorData) => {
+//Error to pass in Catch Block
+exports.throwErrorc = (err, status) => {
   const error = new Error(err || "Some Error Occured");
   error.statusCode = status || 520;
   next(error);

@@ -10,6 +10,7 @@ const port = process.env.PORT;
 const db_uri = process.env.MONGODB_URI;
 
 const app = express();
+app.use(express.json());
 routes(app);
 
 mongoose

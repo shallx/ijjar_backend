@@ -1,0 +1,12 @@
+
+1. Issue Payment(Include invoice)
+3. Expense
+   i) Current month expense,
+   ii) Add expense,
+4. Holders
+   i) Current Holders,
+   ii) Add new Holder,
+   iii) All Holders,
+5. Holdings,
+   i) Holdings,
+   ii) Add new Holding
