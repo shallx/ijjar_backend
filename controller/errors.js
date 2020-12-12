@@ -33,7 +33,7 @@ exports.throwError = (err, status, errorData) => {
 };
 
 //Error to pass in Catch Block
-exports.throwErrorc = (err, status) => {
+exports.throwErrorc = (err, next, status) => {
   const error = new Error(err || "Some Error Occured");
   error.statusCode = status || 520;
   next(error);

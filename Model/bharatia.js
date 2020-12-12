@@ -55,6 +55,10 @@ const bharatiaSchema = new Schema({
       },
     },
   ],
+  due: {
+    type: Number,
+    default: 0,
+  },
   active_from: Date,
   checked_out: Date,
   active: {

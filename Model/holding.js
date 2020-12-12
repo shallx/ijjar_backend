@@ -18,6 +18,10 @@ const holdingSchema = new Schema({
   current_holder: {
     type: Schema.Types.ObjectId,
     ref: "Bharatia",
+    holding : {
+      type: Schema.Types.ObjectId,
+      ref: "Bharatia",
+    },
   },
   base_fair: {
     type: Number,

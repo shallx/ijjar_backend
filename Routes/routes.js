@@ -3,7 +3,6 @@ const bharatiaRoutes = require("./bharatiaRoutes");
 const userRoutes = require("./userRoutes");
 const holdingRoutes = require("./holdingRoutes");
 const chalk = require("chalk");
-const testRoutes = require('./testRoutes');
 // const express = require("express");
 
 exports.routes = app => {
@@ -16,7 +15,6 @@ exports.routes = app => {
   app.use("/api", userRoutes);
   app.use("/api/bharatia", bharatiaRoutes);
   app.use("/api/holding", holdingRoutes);
-  app.use("/api/test", testRoutes);
 
   // If any error occurs
   app.use((err, req, res, next) => {

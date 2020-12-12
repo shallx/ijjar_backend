@@ -1,16 +1,7 @@
-const Holding = require("../Model/holding");
-const Bharatia = require("../Model/bharatia");
+const Holding = require("../Model/Holding");
+const Bharatia = require("../Model/Bharatia");
 const errorHandler = require("./errors");
 const faker = require("faker");
-exports.create = (req, res, next) => {
-  const holding = new Holding(req.body);
-  holding
-    .save()
-    .then(() => {
-      return res.status(201).json({ msg: "Success" });
-    })
-    .catch(err => errorHandler.throwErrorc(err, next));
-};
 
 exports.index = (req, res, next) => {
   Holding.find()
@@ -22,24 +13,46 @@ exports.index = (req, res, next) => {
     .catch(err => errorHandler.throwErrorc(err, next));
 };
 
+exports.store = (req, res, next) => {
+  // Empty body check
+  if(Object.keys(req.body).length === 0 && req.body.constructor === Object) throw Error("Input Fields can't be empty");
+
+  const holding = new Holding(req.body);
+  holding
+    .save()
+    .then((result) => {
+      return res.status(201).json(result);
+    })
+    .catch(err => errorHandler.throwErrorc(err, next));
+};
+
 exports.show = (req, res, next) => {
-  const _id = req.params.id;
-  const holding = Holding.findById(_id);
-  then(() => {
+  const _id = req.params._id;
+  Holding.findById(_id)
+  .then((holding) => {
     return res.json(holding);
   }).catch(err => errorHandler.throwErrorc(err, next));
 };
 
-exports.store = (req, res, next) => {};
+exports.update = (req, res, next) => {
+  const _id = req.params._id;
+  console.log(req.body);
+  Holding.findOneAndUpdate({_id}, req.body, {
+    new: true
+  }).then(newHolding => {
+    if(newHolding == null) throw Error('No such Id found');
+    return res.status(201).json(newHolding);
+  }).catch(err => errorHandler.throwErrorc(err, next));
+};
 
-exports.edit = (req, res, next) => {};
-
-exports.update = (req, res, next) => {};
-
-exports.destroy = (req, res, next) => {};
-
-exports.test = (req, res, next) => {
-  res.send("It works");
+exports.destroy = (req, res, next) => {
+  const _id = req.params._id;
+  Holding.findOneAndDelete({_id})
+    .then((result) => {
+      if(result == null) throw Error("No such Id found");
+      res.status(200).json({message : 'Successfully Deleted!!'})
+    })
+    .catch(err => errorHandler.throwErrorc(err, next));
 };
 
 // exports.generate = async (req, res, next) => {
@@ -87,11 +100,6 @@ exports.generate = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     errorHandler.throwErrorc(error);
-  }
-  try {
-    var holding = await Holding.findOne({ serial: 7 });
-  } catch (error) {
-    errorHandler.throwErrorc(error, 500);
   }
   return res.status(200).json({ message: "Generated Successfully" });
 };

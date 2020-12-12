@@ -1,12 +1,20 @@
 
 1. Issue Payment(Include invoice)
+2. Monthly
+   i) Current Month Holding
+   ii) Current Month Expese
 3. Expense
    i) Current month expense,
    ii) Add expense,
 4. Holders
    i) Current Holders,
-   ii) Add new Holder,
-   iii) All Holders,
+   ii) Show Holder details
+   iii) Add new Holder,
+   iv) All Holders,
+   v) Delete Holder,
+   vi)
 5. Holdings,
-   i) Holdings,
+   i) Current Holders - Grouped by Room, Shop, blacksmith
    ii) Add new Holding
+   iii) Remove Holding
+   iv) Delete Holding

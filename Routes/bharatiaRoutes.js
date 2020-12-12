@@ -2,8 +2,10 @@ const express = require("express");
 const Router = express.Router();
 const bharatiaController = require("../controller/bharatiaController");
 
-Router.post("/create", bharatiaController.create);
+Router.post("/", bharatiaController.store);
 Router.get("/", bharatiaController.index);
-Router.get("/test", bharatiaController.test);
+Router.get("/:_id", bharatiaController.show);
+Router.put("/:_id", bharatiaController.update);
+Router.delete("/:_id", bharatiaController.destroy);
 
 module.exports = Router;
