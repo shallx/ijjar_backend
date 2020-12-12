@@ -4,12 +4,11 @@ const error = require("./errors");
 
 exports.index = (req, res, next) => {
   Bharatia.find()
-    .select({ holding: 1, _id: 0 })
-    .populate({
-      path: "holding",
-      options: { sort: 'base_fair', select: 'serial base_fair' },
-    })
-    // .populate("holding")
+    // .select({ holding: 1, _id: 0 })
+    // .populate({
+    //   path: "holding.holding_id",
+    // })
+    .sort({"holding.serial": 1})
     .exec((err, bharatias) => {
       if (err) {
         error.errorHandle(err, next);

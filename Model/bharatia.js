@@ -11,8 +11,9 @@ const bharatiaSchema = new Schema({
   address: String,
   contact: String,
   holding: {
-    type: Schema.Types.ObjectId,
-    ref: "Holding",
+    // type: Schema.Types.ObjectId,
+    holding_id:{type: Schema.Types.ObjectId, ref: "Holding",},
+    serial: Number,
   },
   invoices: [
     {

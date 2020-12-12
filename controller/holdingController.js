@@ -43,7 +43,6 @@ exports.test = (req, res, next) => {
 };
 
 // exports.generate = async (req, res, next) => {
-//   // console.log(faker.random.arrayElement([2200, 2400, 3000, 3500]));
 
 //   for (i = 1; i <= 10; i++) {
 //     var holding = new Holding({
@@ -64,21 +63,21 @@ exports.test = (req, res, next) => {
 //   return res.status(200).json({ message: "success" });
 // };
 exports.generate = async (req, res, next) => {
-  // console.log(faker.random.arrayElement([2200, 2400, 3000, 3500]));
   try {
     var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
     for (i = 1; i <= 10; i++) {
-      console.log(numbers.length);
-      var rand = getRandomInt(1, numbers.length);
-
-      numbers.splice(rand - 1, 1);
-      var holding = await Holding.findOne({ serial: rand });
+      var rand = getRandomInt(0, numbers.length-1);
+      var holding = await Holding.findOne({ serial: numbers[rand] });
+      numbers.splice(rand, 1);
       var bharatia = new Bharatia({
         name: faker.name.findName() + " " + faker.name.lastName(),
         address: faker.address.streetAddress(),
         contact: faker.phone.phoneNumber(),
-        holding: holding,
+        holding: {
+          holding_id: holding,
+          serial: holding.serial,
+        },
         invoices: [],
         payments: [],
         active: faker.random.boolean(),
@@ -94,7 +93,7 @@ exports.generate = async (req, res, next) => {
   } catch (error) {
     errorHandler.throwErrorc(error, 500);
   }
-  return res.status(200).json({ message: holding });
+  return res.status(200).json({ message: "Generated Successfully" });
 };
 
 function getRandomInt(min, max) {
