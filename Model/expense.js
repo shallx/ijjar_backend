@@ -6,7 +6,8 @@ const expenseSchema = new Schema({
   electric: Number,
   gas: Number,
   cleaner: Number,
-  babul: Number,
+  pagla: Number,
+  care_taker: Number,
   repairments: Number,
   Other: [
     {

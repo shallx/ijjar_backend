@@ -30,7 +30,10 @@ exports.store = (req, res, next) => {
       const bharatia = new Bharatia(req.body);
       bharatia.holding = {
         holding_id: mongoose.Types.ObjectId(holding._id),
-          serial: req.body.serial
+          serial: req.body.serial,
+          type: req.body.type,
+          fair: req.body.fair,
+          additional_fairs: req.body.additional_fairs
       }
       return bharatia.save();
     })
@@ -71,3 +74,130 @@ exports.destroy = (req, res, next) => {
     })
     .catch(err => errorHandler.throwErrorc(err, next));
 };
+
+// Issue Invoice
+exports.addNewInvoice = async (req, res, next) => {
+  try {
+    const {amount, month, year, type, serial, description} = req.body;
+    const invoice = {
+      description,
+      date: new Date(),
+      amount,
+      month: new Date(year, month, 1)
+    }
+    const bharatia = await Bharatia.findOne({"holding.serial": serial, "holding.type": type});
+    bharatia.due += parseInt(amount);
+    await bharatia.addToInvoices(invoice);
+    res.json({message: "Success!!!"});
+  }
+  catch(error){
+    console.log(error);
+    res.json({message: "Some error occured!!!"});
+  }
+}
+
+// Pay dues / add payments,
+exports.addNewPayment = async (req, res, next) => {
+  try {
+    const {amount, month, year, type, serial, description} = req.body;
+    const payment = {
+      description,
+      date: new Date(),
+      amount,
+      month: new Date(year, month, 1)
+    }
+    const bharatia = await Bharatia.findOne({"holding.serial": serial, "holding.type": type});
+    bharatia.due -= parseInt(amount);
+    await bharatia.addToInvoices(payment);
+    res.json({message: "Success!!!"});
+  }
+  catch(error){
+    console.log(error);
+    res.json({message: "Some error occured!!!"});
+  }
+}
+
+exports.findActiveBharatia = async(req, res, next) => {
+  try{
+    const serial = req.query.serial;
+    const type = req.query.type;
+    const bharatia = await Bharatia.findOne({'holding.serial': serial, 'holding.type': type, active: true});
+    res.json(bharatia);
+  }
+  catch(error) {
+    console.log(error);
+    res.json({message: "Some error occured!!!"});
+  }
+}
+
+exports.activeHolders = async(req, res, next) => {
+  try {
+    // const bharatias = await Bharatia.find({active: true}).select('holding.serial holding.type').sort('holding.serial');
+    const bharatias = await Bharatia.aggregate([
+      { $match: { active: true } },
+      { $sort : {'holding.serial': 1}},
+      {
+        $group: {
+          _id: '$holding.type',
+          bharatias: { 
+            $push: {
+              _id: '$holding.holding_id',
+              serial: '$holding.serial',
+              type: '$holding.type',
+              fair: '$holding,fair',
+            }
+           }
+        }
+      },
+    ])
+    res.json(bharatias);
+  }
+  catch(error) {
+    console.log(error);
+    res.json({message: "Some error occured!!!"});
+  }
+}
+
+exports.activeRoomHolders = async(req, res, next) => {
+  try {
+    const bharatias = await Bharatia.find({active: true, 'holding.type': 'Room'}).sort('holding.serial');
+    res.json(bharatias);
+  }
+  catch(error) {
+    console.log(error);
+    res.json({message: "Some error occured!!!"});
+  }
+}
+
+exports.activeShopHolders = async (req, res, next) => {
+  try {
+    const bharatias = await Bharatia.find({active: true, 'holding.type': 'Shop'}).sort('holding.serial');
+    res.json(bharatias);
+  }
+  catch(error) {
+    console.log(error);
+    res.json({message: "Some error occured!!!"});
+  }
+}
+
+exports.activeRoomHolders = async(req, res, next) => {
+  try {
+    const bharatias = await Bharatia.find({active: true, 'holding.type': 'Blacksmith'}).sort('holding.serial');
+    res.json(bharatias);
+  }
+  catch(error) {
+    console.log(error);
+    res.json({message: "Some error occured!!!"});
+  }
+}
+
+exports.activeDueHolders = async(req, res, next) => {
+  try {
+    const bharatias = await Bharatia.find({active: true, 'holding.type': 'Blacksmith'}).sort('holding.serial');
+    res.json(bharatias);
+  }
+  catch(error) {
+    console.log(error);
+    res.json({message: "Some error occured!!!"});
+  }
+}
