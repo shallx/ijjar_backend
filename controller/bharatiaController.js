@@ -20,12 +20,10 @@ exports.index = (req, res, next) => {
 };
 
 exports.store = (req, res, next) => {
-
   if(Object.keys(req.body).length === 0 && req.body.constructor === Object) throw Error("Input Fields can't be empty");
 
   Holding.find({ serial: req.body.serial, type: req.body.type })
     .then(holding => {
-      console.log(holding);
       const data = req.body;
       const bharatia = new Bharatia(req.body);
       bharatia.holding = {
@@ -131,30 +129,44 @@ exports.findActiveBharatia = async(req, res, next) => {
 }
 
 exports.activeHolders = async(req, res, next) => {
-  try {
-    // const bharatias = await Bharatia.find({active: true}).select('holding.serial holding.type').sort('holding.serial');
-    const bharatias = await Bharatia.aggregate([
-      { $match: { active: true } },
-      { $sort : {'holding.serial': 1}},
-      {
-        $group: {
-          _id: '$holding.type',
-          bharatias: { 
-            $push: {
-              _id: '$holding.holding_id',
-              serial: '$holding.serial',
-              type: '$holding.type',
-              fair: '$holding,fair',
-            }
-           }
-        }
-      },
-    ])
-    res.json(bharatias);
+  const type = req.query.type;
+  if(type != null) {
+    try {
+      const bharatias = await Bharatia.find({active: true, 'holding.type': type}).sort('holding.serial');
+      res.json(bharatias);
+    }
+    catch(error) {
+      console.log(error);
+      res.json({message: "Some error occured!!!"});
+    }
   }
-  catch(error) {
-    console.log(error);
-    res.json({message: "Some error occured!!!"});
+  else {
+    try {
+      // const bharatias = await Bharatia.find({active: true}).select('holding.serial holding.type').sort('holding.serial');
+      const bharatias = await Bharatia.aggregate([
+        { $match: { active: true } },
+        { $sort : {'holding.serial': 1}},
+        {
+          $group: {
+            _id: '$holding.type',
+            bharatias: { 
+              // $push: {
+              //   _id: '$holding.holding_id',
+              //   serial: '$holding.serial',
+              //   type: '$holding.type',
+              //   fair: '$holding,fair',
+              // }
+              $push: '$$ROOT'
+             }
+          }
+        },
+      ])
+      res.json(bharatias);
+    }
+    catch(error) {
+      console.log(error);
+      res.json({message: "Some error occured!!!"});
+    }
   }
 }
 
@@ -180,7 +192,7 @@ exports.activeShopHolders = async (req, res, next) => {
   }
 }
 
-exports.activeRoomHolders = async(req, res, next) => {
+exports.activeBlackSmithHolders = async(req, res, next) => {
   try {
     const bharatias = await Bharatia.find({active: true, 'holding.type': 'Blacksmith'}).sort('holding.serial');
     res.json(bharatias);
@@ -193,7 +205,7 @@ exports.activeRoomHolders = async(req, res, next) => {
 
 exports.activeDueHolders = async(req, res, next) => {
   try {
-    const bharatias = await Bharatia.find({active: true, 'holding.type': 'Blacksmith'}).sort('holding.serial');
+    const bharatias = await Bharatia.find({active: true}).where('due').gt(0);
     res.json(bharatias);
   }
   catch(error) {

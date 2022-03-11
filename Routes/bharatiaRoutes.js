@@ -7,6 +7,7 @@ Router.get("/", bharatiaController.index);
 Router.post("/invoice", bharatiaController.addNewInvoice);
 Router.post("/payment", bharatiaController.addNewPayment);
 Router.get("/activeholders", bharatiaController.activeHolders);
+Router.get("/activedueholders", bharatiaController.activeDueHolders);
 Router.get("/find", bharatiaController.findActiveBharatia);
 Router.get("/:_id", bharatiaController.show);
 Router.put("/:_id", bharatiaController.update);
