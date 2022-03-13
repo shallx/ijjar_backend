@@ -5,12 +5,12 @@ const Location = require("../Model/Location");
 const mongoose = require("mongoose");
 
 exports.addPayment = async (req, res, next) => {
-  const amount = 200;
+  errorHandler.throwErrorIfEmptyBody(req);
+  const { amount, invoice_id } = req.body;
   const date = new Date();
-  const invoiceId = "622caed3ebbea83568c40550";
 
   try {
-    const invoice = await Invoice.findById(invoiceId);
+    const invoice = await Invoice.findById(invoice_id);
     if (amount > invoice.due) {
       throw new Error("Payment amount is greater than due");
     }
@@ -19,13 +19,13 @@ exports.addPayment = async (req, res, next) => {
       type: 1,
       amount: amount,
       date: date,
-      invoice: invoiceId,
+      invoice: invoice_id,
     });
 
     invoice.payments.push({
       date: date,
       amount: amount,
-      transaction_id: trans.id,
+      transaction_id: trans._id,
     });
     const result = await invoice.save();
     return res.status(201).json({
@@ -163,26 +163,24 @@ exports.getAll = (req, res, next) => {
   });
 };
 
-exports.create = (req, res, next) => {
+exports.createInvoice = async (req, res, next) => {
+  errorHandler.throwErrorIfEmptyBody(req);
+  const { month, amount, due, breakdown, tenant, payments } = req.body;
   const invoice = new Invoice({
-    month: "January 2022",
-    amount: 2400,
-    breakdown: [
-      {
-        description: "Fare",
-        amount: 2000,
-      },
-      {
-        description: "Fridge",
-        amount: 400,
-      },
-    ],
-    due: 2400,
+    month: month,
+    amount: amount,
+    breakdown: breakdown,
+    due: due ?? amount,
+    tenant,
   });
   invoice
     .save()
     .then(result => {
-      return res.status(201).json(result);
+      return res.status(201).json({
+        success: true,
+        success_message: "Invoice has been created",
+        data: result,
+      });
     })
     .catch(err => errorHandler.throwErrorc(err, next));
 };
