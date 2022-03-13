@@ -2,9 +2,10 @@
 const bharatiaRoutes = require("./bharatiaRoutes");
 const userRoutes = require("./userRoutes");
 const holdingRoutes = require("./holdingRoutes");
-const testRoutes = require('./testRoutes');
+const testRoutes = require("./testRoutes");
+const ijjarRoutes = require("./ijjarRoutes");
 const chalk = require("chalk");
-const User = require('../controller/UserController');
+const User = require("../controller/UserController");
 // const express = require("express");
 
 exports.routes = app => {
@@ -17,8 +18,9 @@ exports.routes = app => {
   app.use("/api", userRoutes);
   app.use("/api/bharatia", bharatiaRoutes);
   app.use("/api/holding", holdingRoutes);
-  app.use('/test', testRoutes);
-  app.get('/user', User.createUser);
+  app.use("/api/ijjar", ijjarRoutes);
+  app.use("/test", testRoutes);
+  app.get("/user", User.createUser);
 
   // If any error occurs
   app.use((err, req, res, next) => {

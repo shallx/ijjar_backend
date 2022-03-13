@@ -1,0 +1,17 @@
+{
+  "Invoice" : {
+    "month" : "January 2021",
+    "amount" : "100.00",
+    "issued_to" : "Name",
+    "breakdown" : [
+      {
+        "description" : "Room Fair",
+        "amount" : 2000
+      },
+      {
+        "description" : "Fridge",
+        "amount" : 2200
+      }
+    ]
+  }
+}

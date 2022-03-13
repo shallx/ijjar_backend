@@ -1,7 +1,9 @@
 const Bharatia = require("../Model/Bharatia");
 const faker = require("faker");
 const Holding = require("../Model/Holding");
-const errorHandler = require("./errors");
+
+
+
 const mongoose = require('mongoose')
 
 exports.index = (req, res, next) => {

@@ -1,4 +1,13 @@
 const chalk = require("chalk");
+
+// Throw error if body is empty
+exports.throwErrorIfEmptyBody = (req) => {
+  if (Object.keys(req.body).length === 0 && req.body.constructor === Object) {
+    const error = new Error("Input Fields can't be empty");
+    throw error;
+  }
+}
+
 //Error to pass in Catchblock
 exports.throw500c = (err, next) => {
   if (!err.statusCode) {
