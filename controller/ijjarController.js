@@ -2,6 +2,7 @@ const Invoice = require("../Model/Invoice");
 const Transaction = require("../Model/Transaction");
 const errorHandler = require("./errors");
 const Location = require("../Model/Location");
+const Bharatia = require("../Model/Bharatia");
 const mongoose = require("mongoose");
 
 exports.addPayment = async (req, res, next) => {
@@ -15,7 +16,7 @@ exports.addPayment = async (req, res, next) => {
       throw new Error("Payment amount is greater than due");
     }
 
-    const trans = Transaction.create({
+    const trans = await Transaction.create({
       type: 1,
       amount: amount,
       date: date,
@@ -25,68 +26,25 @@ exports.addPayment = async (req, res, next) => {
     invoice.payments.push({
       date: date,
       amount: amount,
-      transaction_id: trans._id,
+      transaction_id: trans.id,
     });
     const result = await invoice.save();
     return res.status(201).json({
       success: true,
       success_message: "Transaction has been saved",
-      invoice: result,
-      trans: trans,
+      data: {
+        invoice: result,
+        transaction: trans,
+      },
     });
   } catch (err) {
     errorHandler.throwErrorc(err, next);
   }
-
-  /* Invoice.findById(invoiceId)
-    .then(result => {
-      const originalInvoice = Object.create(result);
-      result.due = result.due - amount;
-      result.payments.push({
-        date: date,
-        amount: amount,
-      });
-      result
-        .save()
-        .then(invoiceResult => {
-          const trans = new Transaction({
-            type: 1,
-            amount: amount,
-            date: date,
-            invoice: invoiceId,
-          });
-          trans
-            .save()
-            .then(data => {
-              throw "fail";
-              return res.status(201).json({
-                success: true,
-                success_message: "Transaction has been saved",
-                invoice: invoiceResult,
-                trans: data,
-              });
-            })
-            .catch(err => {
-              // Transaction will not get recorded yet invoice is updated
-              // fit it
-              console.log("Jayga moto aise");
-              console.log(originalInvoice);
-              originalInvoice.save();
-              errorHandler.throwErrorc(err, next);
-            });
-        })
-        .catch(err => {
-          errorHandler.throwErrorc(err, next);
-        });
-    })
-    .catch(err => {
-      errorHandler.throwErrorc(err, next);
-    }); */
 };
 
-exports.resetInvoice = (req, res, next) => {
-  const invoiceId = "622caed3ebbea83568c40550";
-  Invoice.findById(invoiceId).then((result) => {
+exports.resetInvoice = async (req, res, next) => {
+  const _invoice_id = req.params._id;
+  Invoice.findById(_invoice_id).then(result => {
     result.due = 2400;
     result.payments = [];
     result.save().then((result) => {
@@ -166,6 +124,7 @@ exports.createInvoice = async (req, res, next) => {
     breakdown: breakdown,
     due: due ?? amount,
     tenant,
+    payments,
   });
   invoice
     .save()
@@ -177,4 +136,25 @@ exports.createInvoice = async (req, res, next) => {
       });
     })
     .catch((err) => errorHandler.throwErrorc(err, next));
+};
+
+exports.experiment = async (req, res, next) => {
+  try {
+    const result = await Location.findOne({
+      holdings: mongoose.Types.ObjectId("622e214f7043995b64ef945c"),
+    });
+    return res.status(200).json(result);
+  } catch (error) {
+    errorHandler.throwErrorc(error, next);
+  }
+
+  /* // Find with object ID
+  try {
+    const xx = await Invoice.findOne({
+      "tenant.tenant_id": mongoose.Types.ObjectId("5fd4be2ab62ff223a8f22546"),
+    });
+    return res.status(200).json(xx);
+  } catch (error) {
+    errorHandler.throwErrorc(error, next);
+  } */
 };

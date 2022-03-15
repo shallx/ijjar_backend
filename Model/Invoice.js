@@ -32,7 +32,7 @@ const invoiceSchema = new Schema({
         type: Number,
         required: [true, "Amount is required"],
       },
-      transaction_id: { type: Schema.Types.ObjectId, ref: "Transactions" },
+      transaction_id: { type: Schema.Types.ObjectId, ref: "Transaction" },
     },
   ],
   due: {
@@ -41,8 +41,8 @@ const invoiceSchema = new Schema({
   },
   tenant: {
     tenant_id: { type: Schema.Types.ObjectId, ref: "Bharatia" },
-    location_id : { type: Schema.Types.ObjectId, ref: "Location" },
-    holding_id : {type: Schema.Types.ObjectId},
+    location_id: { type: Schema.Types.ObjectId, ref: "Location" },
+    holding_id: { type: Schema.Types.ObjectId },
     serial: Number,
     name: String,
     type: {
