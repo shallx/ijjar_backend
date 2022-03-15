@@ -86,12 +86,12 @@ exports.addPayment = async (req, res, next) => {
 
 exports.resetInvoice = (req, res, next) => {
   const invoiceId = "622caed3ebbea83568c40550";
-  Invoice.findById(invoiceId).then(result => {
+  Invoice.findById(invoiceId).then((result) => {
     result.due = 2400;
     result.payments = [];
-    result.save().then(result => {
-      Transaction.find().then(transactions => {
-        transactions.forEach(transaction => {
+    result.save().then((result) => {
+      Transaction.find().then((transactions) => {
+        transactions.forEach((transaction) => {
           transaction.remove();
         });
       });
@@ -124,7 +124,7 @@ exports.createLocation = async (req, res, next) => {
 };
 
 // Add a holding to location
-exports.addAHolding = (req, res, next) => {
+exports.addAHolding = async (req, res, next) => {
   errorHandler.throwErrorIfEmptyBody(req);
   const { location_id, type, name, serial, base_fair } = req.body;
 
@@ -135,30 +135,24 @@ exports.addAHolding = (req, res, next) => {
     base_fair,
   };
   try {
-    Location.findById(location_id).then(location => {
-      location.holdings.push(holding);
-      location
-        .save()
-        .then(result => {
-          res.json(result);
-        })
-        .catch(error => {
-          throw error;
-        });
-    });
+    const location = await Location.findById(location_id);
+    location.holdings.push(holding);
+    const result = await location.save();
+    return res.json({result});
   } catch (error) {
+    console.log("Caught an error");
     errorHandler.throwErrorc(error, next);
   }
 };
 
 exports.index = (req, res, next) => {
-  Invoice.find().then(result => {
+  Invoice.find().then((result) => {
     res.json(result);
   });
 };
 
 exports.getAll = (req, res, next) => {
-  Invoice.find().then(result => {
+  Invoice.find().then((result) => {
     res.json(result);
   });
 };
@@ -175,12 +169,12 @@ exports.createInvoice = async (req, res, next) => {
   });
   invoice
     .save()
-    .then(result => {
+    .then((result) => {
       return res.status(201).json({
         success: true,
         success_message: "Invoice has been created",
         data: result,
       });
     })
-    .catch(err => errorHandler.throwErrorc(err, next));
+    .catch((err) => errorHandler.throwErrorc(err, next));
 };

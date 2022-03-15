@@ -5,7 +5,7 @@ const chalk = require("chalk");
 require("dotenv").config();
 
 //Environmentals
-const host = process.env.host;
+const host = process.env.HOST;
 const port = process.env.PORT;
 const db_uri = process.env.MONGODB_URI;
 

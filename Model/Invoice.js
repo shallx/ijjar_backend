@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { Schema } = require("mongoose");
+const { Schema } = mongoose;
 
 const invoiceSchema = new Schema({
   month: {
@@ -44,6 +44,7 @@ const invoiceSchema = new Schema({
     location_id : { type: Schema.Types.ObjectId, ref: "Location" },
     holding_id : {type: Schema.Types.ObjectId},
     serial: Number,
+    name: String,
     type: {
       type: String,
     },

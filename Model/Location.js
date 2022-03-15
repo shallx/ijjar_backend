@@ -13,7 +13,9 @@ const locationSchema = new mongoose.Schema({
         type: String,
         required: [true, "Type is required"],
       },
-      serial: String,
+      serial: {
+        type: Number,
+      },
       name: String,
       base_fair: Number,
       current_tenant_id: {
