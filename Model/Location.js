@@ -15,6 +15,7 @@ const locationSchema = new mongoose.Schema({
       },
       serial: {
         type: Number,
+        unique: true,
       },
       name: String,
       base_fair: Number,

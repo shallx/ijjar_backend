@@ -3,7 +3,8 @@ const bharatiaRoutes = require("./bharatiaRoutes");
 const userRoutes = require("./userRoutes");
 const holdingRoutes = require("./holdingRoutes");
 const testRoutes = require("./testRoutes");
-const ijjarRoutes = require("./ijjarRoutes");
+const invoiceRoutes = require("./invoiceRoutes");
+const locationRoutes = require("./locationRoutes");
 const chalk = require("chalk");
 const User = require("../controller/UserController");
 // const express = require("express");
@@ -18,7 +19,8 @@ exports.routes = app => {
   app.use("/api", userRoutes);
   app.use("/api/bharatia", bharatiaRoutes);
   app.use("/api/holding", holdingRoutes);
-  app.use("/api/ijjar", ijjarRoutes);
+  app.use("/api/invoice", invoiceRoutes);
+  app.use("/api/location", locationRoutes);
   app.use("/test", testRoutes);
   app.get("/user", User.createUser);
 
