@@ -28,7 +28,7 @@ exports.routes = app => {
     const status = err.statusCode || 500;
     const message = err.message || "Internal Server Error";
     const data = err.data;
-    res.status(status).json({ message: message, data: data });
+    res.status(status).json({success: false, message: message, error: data });
   });
 
   // If route does not exist

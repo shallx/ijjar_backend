@@ -31,7 +31,7 @@ exports.addPayment = async (req, res, next) => {
     const result = await invoice.save();
     return res.status(201).json({
       success: true,
-      success_message: "Transaction has been saved",
+      message: "Transaction has been saved",
       data: {
         invoice: result,
         transaction: trans,
@@ -56,8 +56,8 @@ exports.resetInvoice = async (req, res, next) => {
 
       res.json({
         success: true,
-        success_message: "Invoice has been reset",
-        invoice: result,
+        message: "Invoice has been reset",
+        data: result,
       });
     });
   });
@@ -73,8 +73,8 @@ exports.createLocation = async (req, res, next) => {
     });
     return res.status(201).json({
       success: true,
-      success_message: "Location has been created",
-      location: location,
+      message: "Location has been created",
+      data: location,
     });
   } catch (error) {
     errorHandler.throwErrorc(error, next);
@@ -96,7 +96,7 @@ exports.addAHolding = async (req, res, next) => {
     const location = await Location.findById(location_id);
     location.holdings.push(holding);
     const result = await location.save();
-    return res.json({result});
+    return res.status(201).json({success: true, message: "Holding has been added", data: result});
   } catch (error) {
     console.log("Caught an error");
     errorHandler.throwErrorc(error, next);
@@ -105,13 +105,13 @@ exports.addAHolding = async (req, res, next) => {
 
 exports.index = (req, res, next) => {
   Invoice.find().then((result) => {
-    res.json(result);
+    res.status(200).json({success: true, message: "Loaded all invoice", data: result});
   });
 };
 
 exports.getAll = (req, res, next) => {
   Invoice.find().then((result) => {
-    res.json(result);
+    res.status(200).json({success: true, message: "Loaded all invoice", data: result});
   });
 };
 
@@ -143,7 +143,7 @@ exports.experiment = async (req, res, next) => {
     const result = await Location.findOne({
       holdings: mongoose.Types.ObjectId("622e214f7043995b64ef945c"),
     });
-    return res.status(200).json(result);
+    return res.status(200).json({success: true, message: "Finding a location", data: result});
   } catch (error) {
     errorHandler.throwErrorc(error, next);
   }
