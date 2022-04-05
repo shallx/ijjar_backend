@@ -1,6 +1,18 @@
 const Location = require("../Model/Location");
 const mongoose = require("mongoose");
 
+// Get all location
+exports.index = async (req, res, next) => {
+  try {
+    const result = await Location.find();
+    res
+      .status(200)
+      .json({ success: true, message: "All location fetched", data: result });
+  } catch (error) {
+    errorHandler.throwErrorc(error, next);
+  }
+};
+
 // Create a location
 exports.createLocation = async (req, res, next) => {
   errorHandler.throwErrorIfEmptyBody(req);

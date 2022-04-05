@@ -93,3 +93,13 @@ exports.reset = async (req, res, next) => {
     });
   });
 };
+
+exports.destroy = (req, res, next) => {
+    const _id = req.params._id;
+    Invoice.findOneAndDelete({_id})
+      .then((result) => {
+        if(result == null) throw Error("No such Id found");
+        res.status(200).json({success: true ,message : 'Successfully Deleted!!', data: result})
+      })
+      .catch(err => errorHandler.throwErrorc(err, next));
+  };

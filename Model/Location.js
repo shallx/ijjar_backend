@@ -23,6 +23,10 @@ const locationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Bharatia",
       },
+      active: {
+        type: Boolean,
+        default: false,
+      }
     },
   ],
 });
