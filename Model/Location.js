@@ -15,13 +15,12 @@ const locationSchema = new mongoose.Schema({
       },
       serial: {
         type: Number,
-        unique: true,
       },
       name: String,
       base_fair: Number,
       current_tenant_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Bharatia",
+        ref: "Tenant",
       },
       active: {
         type: Boolean,

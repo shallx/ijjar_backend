@@ -3,7 +3,7 @@ const Router = express.Router();
 const Comment = require("../model/Comment");
 const Post = require("../model/Post");
 const User = require('../Model/User');
-const Bharatia = require('../Model/Bharatia');
+const Tenant = require('../Model/Tenant');
 const Holding = require('../Model/Holding');
 // const User = require("../Model/user");
 

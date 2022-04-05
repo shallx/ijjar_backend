@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
 const validator = require("validator");
 
-const bharatiaSchema = new Schema({
+const tenantSchema = new Schema({
   name: {
     type: String,
     trim: true,
@@ -97,20 +97,20 @@ const bharatiaSchema = new Schema({
 });
 
 // methods
-bharatiaSchema.methods.addToInvoices = function(invoice){
+tenantSchema.methods.addToInvoices = function(invoice){
   console.log(this.invoices);
   this.invoices.push(invoice);
   return this.save();
 }
 
-bharatiaSchema.methods.addToPayments = function(payment){
+tenantSchema.methods.addToPayments = function(payment){
   this.payments.push(payment);
   return this.save();
 }
 
 //Virtuals
-bharatiaSchema.virtual('total_fair').get(function(){
+tenantSchema.virtual('total_fair').get(function(){
   return this.holding.fair + this.additional_fairs.reducer((_sum, _current) => _sum + _current.amount, 0);
 })
 
-module.exports = mongoose.model("Bharatia", bharatiaSchema);
+module.exports = mongoose.model("Bharatia", tenantSchema);

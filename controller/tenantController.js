@@ -1,4 +1,4 @@
-const Bharatia = require("../Model/Bharatia");
+const Tenant = require("../Model/Tenant");
 const faker = require("faker");
 const Holding = require("../Model/Holding");
 
@@ -7,17 +7,17 @@ const Holding = require("../Model/Holding");
 const mongoose = require('mongoose')
 
 exports.index = (req, res, next) => {
-  Bharatia.find()
+  Tenant.find()
     // .select({ holding: 1, _id: 0 })
     // .populate({
     //   path: "holding.holding_id",
     // })
     .sort({"holding.serial": 1})
-    .exec((err, bharatias) => {
+    .exec((err, tenants) => {
       if (err) {
         error.errorHandle(err, next);
       }
-      return res.status(200).json(bharatias);
+      return res.status(200).json(tenants);
     });
 };
 
@@ -27,18 +27,18 @@ exports.store = (req, res, next) => {
   Holding.find({ serial: req.body.serial, type: req.body.type })
     .then(holding => {
       const data = req.body;
-      const bharatia = new Bharatia(req.body);
-      bharatia.holding = {
+      const tenant = new Tenant(req.body);
+      tenant.holding = {
         holding_id: mongoose.Types.ObjectId(holding._id),
           serial: req.body.serial,
           type: req.body.type,
           fair: req.body.fair,
           additional_fairs: req.body.additional_fairs
       }
-      return bharatia.save();
+      return tenant.save();
     })
-    .then((bharatia) => {
-      return res.status(201).json(bharatia);
+    .then((tenant) => {
+      return res.status(201).json(tenant);
     })
     .catch(err => {
       errorHandler.throwErrorc(err, next)
@@ -47,9 +47,9 @@ exports.store = (req, res, next) => {
 
 exports.show = (req, res, next) => {
   const _id = req.params._id;
-  Bharatia.findById(_id)
-  .then((bharatia) => {
-    return res.json(bharatia);
+  Tenant.findById(_id)
+  .then((tenant) => {
+    return res.json(tenant);
   }).catch(err => errorHandler.throwErrorc(err, next));
 };
 
@@ -57,17 +57,17 @@ exports.update = (req, res, next) => {
   if(Object.keys(req.body).length === 0 && req.body.constructor === Object) throw Error("Input Fields can't be empty");
 
   const _id = req.params._id;
-  Bharatia.findOneAndUpdate({_id}, req.body, {
+  Tenant.findOneAndUpdate({_id}, req.body, {
     new: true
-  }).then(bharatia => {
-    if(bharatia == null) throw Error('No such Id found');
-    return res.status(201).json(bharatia);
+  }).then(tenant => {
+    if(tenant == null) throw Error('No such Id found');
+    return res.status(201).json(tenant);
   }).catch(err => errorHandler.throwErrorc(err, next));
 };
 
 exports.destroy = (req, res, next) => {
   const _id = req.params._id;
-  Bharatia.findOneAndDelete({_id})
+  Tenant.findOneAndDelete({_id})
     .then((result) => {
       if(result == null) throw Error("No such Id found");
       res.status(200).json({message : 'Successfully Deleted!!'})
@@ -85,9 +85,9 @@ exports.addNewInvoice = async (req, res, next) => {
       amount,
       month: new Date(year, month, 1)
     }
-    const bharatia = await Bharatia.findOne({"holding.serial": serial, "holding.type": type});
-    bharatia.due += parseInt(amount);
-    await bharatia.addToInvoices(invoice);
+    const tenant = await Tenant.findOne({"holding.serial": serial, "holding.type": type});
+    tenant.due += parseInt(amount);
+    await tenant.addToInvoices(invoice);
     res.json({message: "Success!!!"});
   }
   catch(error){
@@ -106,9 +106,9 @@ exports.addNewPayment = async (req, res, next) => {
       amount,
       month: new Date(year, month, 1)
     }
-    const bharatia = await Bharatia.findOne({"holding.serial": serial, "holding.type": type});
-    bharatia.due -= parseInt(amount);
-    await bharatia.addToInvoices(payment);
+    const tenant = await Tenant.findOne({"holding.serial": serial, "holding.type": type});
+    tenant.due -= parseInt(amount);
+    await tenant.addToInvoices(payment);
     res.json({message: "Success!!!"});
   }
   catch(error){
@@ -117,12 +117,12 @@ exports.addNewPayment = async (req, res, next) => {
   }
 }
 
-exports.findActiveBharatia = async(req, res, next) => {
+exports.findActiveTenant = async(req, res, next) => {
   try{
     const serial = req.query.serial;
     const type = req.query.type;
-    const bharatia = await Bharatia.findOne({'holding.serial': serial, 'holding.type': type, active: true});
-    res.json(bharatia);
+    const tenant = await Tenant.findOne({'holding.serial': serial, 'holding.type': type, active: true});
+    res.json(tenant);
   }
   catch(error) {
     console.log(error);
@@ -134,8 +134,8 @@ exports.activeHolders = async(req, res, next) => {
   const type = req.query.type;
   if(type != null) {
     try {
-      const bharatias = await Bharatia.find({active: true, 'holding.type': type}).sort('holding.serial');
-      res.json(bharatias);
+      const tenants = await Tenant.find({active: true, 'holding.type': type}).sort('holding.serial');
+      res.json(tenants);
     }
     catch(error) {
       console.log(error);
@@ -144,14 +144,14 @@ exports.activeHolders = async(req, res, next) => {
   }
   else {
     try {
-      // const bharatias = await Bharatia.find({active: true}).select('holding.serial holding.type').sort('holding.serial');
-      const bharatias = await Bharatia.aggregate([
+      // const tenants = await Tenant.find({active: true}).select('holding.serial holding.type').sort('holding.serial');
+      const tenants = await Tenant.aggregate([
         { $match: { active: true } },
         { $sort : {'holding.serial': 1}},
         {
           $group: {
             _id: '$holding.type',
-            bharatias: { 
+            tenants: { 
               // $push: {
               //   _id: '$holding.holding_id',
               //   serial: '$holding.serial',
@@ -163,7 +163,7 @@ exports.activeHolders = async(req, res, next) => {
           }
         },
       ])
-      res.json(bharatias);
+      res.json(tenants);
     }
     catch(error) {
       console.log(error);
@@ -174,8 +174,8 @@ exports.activeHolders = async(req, res, next) => {
 
 exports.activeRoomHolders = async(req, res, next) => {
   try {
-    const bharatias = await Bharatia.find({active: true, 'holding.type': 'Room'}).sort('holding.serial');
-    res.json(bharatias);
+    const tenants = await Tenant.find({active: true, 'holding.type': 'Room'}).sort('holding.serial');
+    res.json(tenants);
   }
   catch(error) {
     console.log(error);
@@ -185,8 +185,8 @@ exports.activeRoomHolders = async(req, res, next) => {
 
 exports.activeShopHolders = async (req, res, next) => {
   try {
-    const bharatias = await Bharatia.find({active: true, 'holding.type': 'Shop'}).sort('holding.serial');
-    res.json(bharatias);
+    const tenants = await Tenant.find({active: true, 'holding.type': 'Shop'}).sort('holding.serial');
+    res.json(tenants);
   }
   catch(error) {
     console.log(error);
@@ -196,8 +196,8 @@ exports.activeShopHolders = async (req, res, next) => {
 
 exports.activeBlackSmithHolders = async(req, res, next) => {
   try {
-    const bharatias = await Bharatia.find({active: true, 'holding.type': 'Blacksmith'}).sort('holding.serial');
-    res.json(bharatias);
+    const tenants = await Tenant.find({active: true, 'holding.type': 'Blacksmith'}).sort('holding.serial');
+    res.json(tenants);
   }
   catch(error) {
     console.log(error);
@@ -207,8 +207,8 @@ exports.activeBlackSmithHolders = async(req, res, next) => {
 
 exports.activeDueHolders = async(req, res, next) => {
   try {
-    const bharatias = await Bharatia.find({active: true}).where('due').gt(0);
-    res.json(bharatias);
+    const tenants = await Tenant.find({active: true}).where('due').gt(0);
+    res.json(tenants);
   }
   catch(error) {
     console.log(error);

@@ -1,5 +1,5 @@
 const Holding = require("../Model/Holding");
-const Bharatia = require("../Model/Bharatia");
+const Tenant = require("../Model/Tenant");
 const errorHandler = require("./errors");
 const faker = require("faker");
 

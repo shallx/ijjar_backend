@@ -1,4 +1,5 @@
 const Location = require("../Model/Location");
+const errorHandler = require("./errors");
 const mongoose = require("mongoose");
 
 // Get all location
@@ -46,13 +47,14 @@ exports.addAHolding = async (req, res, next) => {
   };
   try {
     const location = await Location.findById(location_id);
+    if(location == null) throw Error("Location not found");
     location.holdings.push(holding);
     const result = await location.save();
     return res
       .status(201)
       .json({ success: true, message: "Holding has been added", data: result });
   } catch (error) {
-    console.log("Caught an error");
+    console.log(error);
     errorHandler.throwErrorc(error, next);
   }
 };
@@ -60,7 +62,7 @@ exports.addAHolding = async (req, res, next) => {
 exports.experiment = async (req, res, next) => {
   try {
     const result = await Location.findOne({
-      holdings: mongoose.Types.ObjectId("622e214f7043995b64ef945c"),
+      "holdings._id": mongoose.Types.ObjectId("624c16d6c83686228d73bacb"),
     });
     return res
       .status(200)

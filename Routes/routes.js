@@ -1,5 +1,5 @@
 // Route Imports
-const bharatiaRoutes = require("./bharatiaRoutes");
+const tenantRoutes = require("./tenantRoutes");
 const userRoutes = require("./userRoutes");
 const holdingRoutes = require("./holdingRoutes");
 const testRoutes = require("./testRoutes");
@@ -17,7 +17,7 @@ exports.routes = app => {
     });
   });
   app.use("/api", userRoutes);
-  app.use("/api/bharatia", bharatiaRoutes);
+  app.use("/api/tenant", tenantRoutes);
   app.use("/api/holding", holdingRoutes);
   app.use("/api/invoice", invoiceRoutes);
   app.use("/api/location", locationRoutes);
