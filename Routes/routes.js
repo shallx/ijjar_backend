@@ -5,6 +5,7 @@ const holdingRoutes = require("./holdingRoutes");
 const testRoutes = require("./testRoutes");
 const invoiceRoutes = require("./invoiceRoutes");
 const locationRoutes = require("./locationRoutes");
+const eventRoutes = require("./eventRoutes");
 const chalk = require("chalk");
 const User = require("../controller/UserController");
 // const express = require("express");
@@ -21,6 +22,7 @@ exports.routes = app => {
   app.use("/api/holding", holdingRoutes);
   app.use("/api/invoice", invoiceRoutes);
   app.use("/api/location", locationRoutes);
+  app.use("/api/event", eventRoutes);
   app.use("/test", testRoutes);
   app.get("/user", User.createUser);
 
